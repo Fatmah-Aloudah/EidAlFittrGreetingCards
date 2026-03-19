@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>بطاقات التهنئة</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Cairo', sans-serif;
+  background: #f5f7fb;
+}
+
+.header {
+  text-align: center;
+  padding: 15px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.templates {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px;
+}
+
+.templates img {
+  width: 120px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.card-box {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+}
+
+#card {
+  width: 400px;
+  height: 240px;
+  border-radius: 15px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.name {
+  position: absolute;
+  bottom: 20px;
+  width: 100%;
+  text-align: center;
+  font-size: 26px;
+  color: white;
+  font-weight: bold;
+}
+
+.controls {
+  text-align: center;
+  padding: 10px;
+}
+
+input {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+button {
+  padding: 10px 15px;
+  margin-top: 10px;
+  border: none;
+  background: #10b981;
+  color: white;
+  border-radius: 12px;
+  cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">🌙 اختر بطاقتك و اكتب اسمك</div>
+
+<div class="templates">
+  <img src="eid1.png" onclick="selectTemplate(this.src)">
+  <img src="eid2.png" onclick="selectTemplate(this.src)">
+  <img src="eid3.png" onclick="selectTemplate(this.src)">
+  <img src="https://i.imgur.com/8Km9tLL.jpg" onclick="selectTemplate(this.src)">
+</div>
+
+<div class="card-box">
+  <div id="card">
+    <div class="name" id="name">اسمك هنا</div>
+  </div>
+</div>
+
+<div class="controls">
+  <input type="text" placeholder="اكتب اسمك" oninput="updateName(this.value)">
+  <br>
+  <button onclick="downloadCard()">تحميل البطاقة</button>
+</div>
+
+<script>
+const card = document.getElementById("card");
+const nameText = document.getElementById("name");
+
+let currentImage = "";
+
+/* اختيار الصورة */
+function selectTemplate(src) {
+  currentImage = src;
+  card.style.backgroundImage = `url(${src})`;
+}
+
+/* تحديث الاسم */
+function updateName(value) {
+  nameText.innerText = value || "اسمك هنا";
+}
+
+/* تحميل باستخدام Canvas */
+function downloadCard() {
+    if (!currentImage) {
+    alert("اختر صورة أولاً");
+    return;
+  }
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = 400;
+  canvas.height = 240;
+
+  const img = new Image();
+
+  // مهم جدًا لحل مشكلة الصور
+  img.crossOrigin = "anonymous";
+
+  img.onload = function () {
+    // رسم الصورة
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // إعداد النص
+    ctx.font = "bold 26px Cairo";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+
+    ctx.shadowColor = "rgba(0,0,0,0.7)";
+    ctx.shadowBlur = 8;
+
+    ctx.fillText(nameText.innerText, canvas.width / 2, canvas.height - 20);
+
+    // تحميل
+    const link = document.createElement("a");
+    link.download = "eid-card.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  img.onerror = function () {
+    alert("فشل تحميل الصورة ❌ تأكد من المسار");
+  };
+
+  // حط src بعد onload (مهم)
+  img.src = currentImage;
+}
+</script>
+
+</body>
+</html>
