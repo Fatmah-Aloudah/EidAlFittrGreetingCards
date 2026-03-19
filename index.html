@@ -152,7 +152,8 @@ function downloadCard() {
 
     ctx.shadowColor = "rgba(0,0,0,0.7)";
     ctx.shadowBlur = 8;
-
+    
+	ctx.textBaseline = "middle";
     ctx.fillText(nameText.innerText, canvas.width / 2, canvas.height - 185);
 
     // تحميل
