@@ -105,7 +105,7 @@ button {
 
 <div class="card-box">
   <div id="card">
-    <div class="name" id="name">اسمك هنا</div>
+     <div class="name" id="cardName">اسمك هنا</div>
   </div>
 </div>
 
@@ -125,9 +125,10 @@ button {
 
 <script>
 const card = document.getElementById("card");
-const nameText = document.getElementById("name");
+const nameText = document.getElementById("cardName");
 
 let currentImage = "";
+let currentColor = "#ffffff";
 
 /* اختيار الصورة */
 function selectTemplate(src) {
@@ -138,12 +139,13 @@ function selectTemplate(src) {
 /* تحديث الاسم */
 /* تغيير لون الخط */
 function changeColor(color) {
+  currentColor = color;
   nameText.style.color = color;
 }
 
 /* تحميل باستخدام Canvas */
-function downloadCard() {
-    if (!currentImage) {
+async function downloadCard() {
+  if (!currentImage) {
     alert("اختر صورة أولاً");
     return;
   }
@@ -156,36 +158,36 @@ function downloadCard() {
 
   const img = new Image();
 
-  // مهم جدًا لحل مشكلة الصور
   img.crossOrigin = "anonymous";
 
-  img.onload = function () {
+  img.onload = async function () {
+
+    // انتظار تحميل الخط
+    await document.fonts.ready;
+
     // رسم الصورة
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
     // إعداد النص
     ctx.font = "bold 26px Cairo";
-    ctx.fillStyle = getComputedStyle(nameText).color;
+    ctx.fillStyle = currentColor;
     ctx.textAlign = "center";
 
     ctx.shadowColor = "rgba(0,0,0,0.7)";
     ctx.shadowBlur = 8;
-    
-	ctx.textBaseline = "middle";
+
+    ctx.textBaseline = "middle";
+
+    // رسم الاسم الحالي
     ctx.fillText(nameText.innerText, canvas.width / 2, canvas.height - 185);
 
-    // تحميل
+    // تحميل الصورة
     const link = document.createElement("a");
     link.download = "eid-card.png";
     link.href = canvas.toDataURL("image/png");
     link.click();
   };
 
-  img.onerror = function () {
-    alert("فشل تحميل الصورة ❌ تأكد من المسار");
-  };
-
-  // حط src بعد onload (مهم)
   img.src = currentImage;
 }
 </script>
