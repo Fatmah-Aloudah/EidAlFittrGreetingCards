@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title> بطاقات التهنئة للعيد</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Cairo', sans-serif;
+  background: #4b4f57;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  padding: 15px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* القوالب */
+.templates {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px;
+  scroll-behavior: smooth;
+}
+
+.templates::-webkit-scrollbar {
+  display: none;
+}
+
+.templates img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: 0.3s;
+}
+
+.templates img:hover {
+  transform: scale(1.05);
+}
+
+/* البطاقة */
+.card-box {
+  display: flex;
+  justify-content: center;
+  padding: 15px;
+}
+
+#card {
+  width: min(92vw, 612px);
+  aspect-ratio: 1 / 1;
+
+  border-radius: 18px;
+  background-size: cover;
+  background-position: center;
+  background-color: #666;
+
+  position: relative;
+  overflow: hidden;
+
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
+
+/* الاسم */
+.name {
+  position: absolute;
+  bottom: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  width: 90%;
+
+  text-align: center;
+  color: white;
+  font-weight: bold;
+
+  font-size: clamp(20px, 4vw, 32px);
+
+  z-index: 10;
+  pointer-events: none;
+
+  text-shadow: 0 3px 10px rgba(0,0,0,0.7);
+}
+
+/* الأدوات */
+.controls {
+  text-align: center;
+  padding: 15px;
+}
+
+input[type="text"] {
+  width: min(90%, 320px);
+
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+
+  font-size: 16px;
+  outline: none;
+}
+
+input[type="color"] {
+  width: 55px;
+  height: 40px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+button {
+  margin-top: 15px;
+
+  padding: 12px 20px;
+  border: none;
+  border-radius: 14px;
+
+  background: #10b981;
+  color: white;
+
+  font-size: 16px;
+  font-family: 'Cairo', sans-serif;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* تحسينات للجوال */
+@media (max-width: 600px) {
+
+  .header {
+    font-size: 18px;
+  }
+
+  .templates img {
+    width: 75px;
+    height: 75px;
+  }
+
+  .controls {
+    padding-bottom: 30px;
+  }
+
+  button {
+    width: 90%;
+    max-width: 320px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header"> اختر بطاقتك و اكتب اسمك</div>
+
+<div class="templates">
+  <img src="eid1.png" onclick="selectTemplate(this.src)">
+  <img src="eid2.png" onclick="selectTemplate(this.src)">
+  <img src="eid3.png" onclick="selectTemplate(this.src)">
+  <img src="eid4.png" onclick="selectTemplate(this.src)">
+  <img src="eid5.png" onclick="selectTemplate(this.src)">
+  <img src="eid6.png" onclick="selectTemplate(this.src)">
+  <img src="eid7.png" onclick="selectTemplate(this.src)">
+  <img src="eid8.png" onclick="selectTemplate(this.src)">
+  <img src="eid9.png" onclick="selectTemplate(this.src)">
+  <img src="eid10.png" onclick="selectTemplate(this.src)">
+  
+
+<img src="eid3.png" onclick="selectTemplate(this.src)">  </div>
+
+<div class="card-box">
+   <div id="card">
+      <div class="name" id="cardName">اسمك هنا</div>
+   </div>
+</div>
+
+<div class="controls">
+  <input type="text" placeholder="اكتب اسمك" oninput="updateName(this.value)">
+  
+  <br><br>
+
+  <!-- اختيار لون الخط -->
+  <label style="color:white;">اختر لون الخط:</label>
+  <input type="color" value="#ffffff" onchange="changeColor(this.value)">
+
+  <br>
+
+  <button onclick="downloadCard()">تحميل البطاقة</button>
+</div>
+
+<script>
+const card = document.getElementById("card");
+const nameText = document.getElementById("cardName");
+function updateName(value) {
+  nameText.textContent = value || "اسمك هنا";
+}
+let currentImage = "";
+let currentColor = "#ffffff";
+
+/* اختيار الصورة */
+function selectTemplate(src) {
+  currentImage = src;
+  card.style.backgroundImage = `url(${src})`;
+}
+
+/* تحديث الاسم */
+/* تغيير لون الخط */
+function changeColor(color) {
+  currentColor = color;
+  nameText.style.color = color;
+}
+
+/* تحميل باستخدام Canvas */
+async function downloadCard() {
+  if (!currentImage) {
+    alert("اختر صورة أولاً");
+    return;
+  }
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  canvas.width = 612;
+  canvas.height = 612;
+
+  const img = new Image();
+
+  img.crossOrigin = "anonymous";
+
+  img.onload = async function () {
+
+    // انتظار تحميل الخط
+    await document.fonts.ready;
+
+    // رسم الصورة
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    // إعداد النص
+    ctx.font = "bold 26px Cairo";
+    ctx.fillStyle = currentColor;
+    ctx.textAlign = "center";
+
+    ctx.shadowColor = "rgba(0,0,0,0.7)";
+    ctx.shadowBlur = 8;
+
+    ctx.textBaseline = "middle";
+
+    // رسم الاسم الحالي
+    ctx.fillText(nameText.innerText, canvas.width / 2, canvas.height - 185);
+
+    // تحميل الصورة
+    const link = document.createElement("a");
+    link.download = "eid-card.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  img.src = currentImage;
+}
+</script>
+
+</body>
+</html>
